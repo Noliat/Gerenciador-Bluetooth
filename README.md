@@ -1,9 +1,5 @@
 # BluetoothManager — revisão geral do projeto
 
-> **Atenção:** nada abaixo foi compilado nem testado em hardware (a revisão foi feita sem acesso ao compilador).
-> Abra a solução, faça **Rebuild** e envie os erros/avisos, se houver. Antes de sobrescrever sua cópia local,
-> compare os seus `.xaml` e o `Views/ConnectButton.xaml.cs` (editados localmente) com os desta entrega.
-
 ## 1. Código morto → `DeadCode/`
 - Os 45 arquivos que estavam como *Nenhum / não compilar* (`<None>`) foram movidos para `DeadCode/`, mantendo a estrutura de pastas original.
 - Cópias (`* - Copia*.cs`), backups (`.old`) e ~30 classes marcadas como `<Compile>` mas **nunca referenciadas** (nem em C# nem em XAML) também foram para `DeadCode/`. Total: ~164 arquivos.
