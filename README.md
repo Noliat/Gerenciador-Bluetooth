@@ -1,5 +1,25 @@
 # BluetoothManager — revisão geral do projeto
 
+> **Atenção:** nada abaixo foi compilado nem testado em hardware (a revisão foi feita sem acesso ao compilador).
+> Abra a solução, faça **Rebuild** e envie os erros/avisos, se houver. Antes de sobrescrever sua cópia local,
+> compare os seus `.xaml` e o `Views/ConnectButton.xaml.cs` (editados localmente) com os desta entrega.
+
+## 0. Projetos de base e referências
+
+Partes deste projeto foram estudadas a partir de (ou escritas com base em) projetos de código aberto. Os comentários no código apontam o ponto exato de cada referência.
+
+| Projeto | Repositório | Licença | Onde aparece |
+|---|---|---|---|
+| **ToothTray** (ícone de bandeja para conectar/desconectar áudio Bluetooth) | <https://github.com/m2jean/ToothTray> | BSD-2-Clause | Reconexão/desconexão por Kernel Streaming (`KSPROPERTY_ONESHOT_RECONNECT` / `_DISCONNECT`), varredura de topologia e agrupamento de endpoints por ContainerId: `BtAudioKsInterop.cs` (referência a `BluetoothAudioDevices.cpp`), `AudioIHelpers.cs`, `BluetoothConnectionService.cs` |
+| **EarTrumpet** (controle de volume por aplicativo) | <https://github.com/File-New-Project/EarTrumpet> | confirme no repositório | Layout das interfaces COM de áudio (`AudioInterop.cs`), estrutura de popup/lista de dispositivos (`AppPopup.cs`, `DeviceView`), hospedagem de extensões (`Class/Extensibility/Hosting`), `HotkeyData.cs` (PR [#1133](https://github.com/File-New-Project/EarTrumpet/pull/1133)) |
+| **windows-driver-docs** (documentação da Microsoft) | <https://github.com/MicrosoftDocs/windows-driver-docs> | CC BY 4.0 / MIT (conteúdo e código de exemplo; confirme no repositório) | Semântica das propriedades KS: [`ksproperty-oneshot-reconnect.md`](https://github.com/MicrosoftDocs/windows-driver-docs/blob/staging/windows-driver-docs-pr/audio/ksproperty-oneshot-reconnect.md) e [`ksproperty-oneshot-disconnect.md`](https://github.com/MicrosoftDocs/windows-driver-docs/blob/staging/windows-driver-docs-pr/audio/ksproperty-oneshot-disconnect.md) |
+| **.NET Foundation (WPF)** | <https://github.com/dotnet/wpf> | MIT | `Class/UI/Controls/ProgressBar.cs` mantém o cabeçalho de licença da .NET Foundation (MIT); a origem exata do arquivo não está registrada, confirme antes de redistribuir |
+
+Observações:
+- Só a licença do ToothTray foi verificada ao escrever esta seção; as demais estão marcadas para conferência. Se algum trecho foi copiado (e não só estudado), mantenha o aviso de copyright e o texto da licença original, como cada licença exige (BSD-2-Clause exige reter o aviso).
+- Nenhum pacote NuGet de áudio de terceiros é usado (NAudio foi removido); `AsyncOperationExtensions` é própria, no lugar de `System.Runtime.WindowsRuntime`.
+- Dependências restantes (`packages.config`): `Microsoft.Win32.Registry`, `System.Security.AccessControl`, `System.Security.Principal.Windows` (Microsoft, MIT).
+
 ## 1. Código morto → `DeadCode/`
 - Os 45 arquivos que estavam como *Nenhum / não compilar* (`<None>`) foram movidos para `DeadCode/`, mantendo a estrutura de pastas original.
 - Cópias (`* - Copia*.cs`), backups (`.old`) e ~30 classes marcadas como `<Compile>` mas **nunca referenciadas** (nem em C# nem em XAML) também foram para `DeadCode/`. Total: ~164 arquivos.
